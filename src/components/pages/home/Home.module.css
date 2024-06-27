@@ -1,0 +1,14 @@
+.logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: #FFF;
+    text-transform: uppercase;
+    text-align: center;
+    margin: 25px 0;
+}
+.logOut {
+    padding: 15px 20px;
+}
+.logOut > p {
+    margin-bottom: 0;
+}

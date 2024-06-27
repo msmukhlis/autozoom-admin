@@ -1,0 +1,113 @@
+/* Categories.module.css */
+
+.tableContainer {
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.table th, .table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.table th {
+    background-color: #f1f1f1;
+    color: #333;
+    font-weight: bold;
+}
+
+.table td img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.table td .btns {
+    display: flex;
+    gap: 10px;
+}
+
+.table td .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btnBlue {
+    background-color: #1890ff;
+    color: #fff;
+    border: none;
+    outline: none;
+}
+
+.btnBlue:hover {
+    background-color: #40a9ff;
+}
+
+.btnRed {
+    background-color: #ff4d4f;
+    color: #fff;
+    border: none;
+    outline: none;
+}
+
+.btnRed:hover {
+    background-color: #ff7875;
+}
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.navbar h2 {
+    font-weight: 700;
+}
+.addBtn {
+    font-size: 38px;
+    background-color: transparent;
+    border: none;
+    color: #1890ff;
+    cursor: pointer;
+}
+.addBtn:hover {
+    color: #40a9ff;
+}
+.btnAdd {
+    background-color: #1890ff;
+    padding: 5px 20px;
+    border-radius: 4px;
+    border: none;
+    color: #FFF;
+    cursor: pointer;
+    width: 100%;
+    margin:30px 0 20px;
+}
+.row {
+    margin: 30px 0;
+    display: flex;
+    flex-direction: column;
+}
+.row label {
+    margin-bottom: 10px;
+}
+.switch {
+    width: 44px;
+}
