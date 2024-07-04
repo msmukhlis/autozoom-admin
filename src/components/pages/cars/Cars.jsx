@@ -177,7 +177,7 @@ export const Cars = () => {
     formData.append("price_in_usd_sale", usd2);
     formData.append("images", image);
     formData.append("images", image2);
-    formData.append("images", image3);
+    formData.append("cover", image3);
 
     fetch("https://autoapi.dezinfeksiyatashkent.uz/api/cars", {
       method: "POST",
@@ -230,17 +230,11 @@ export const Cars = () => {
   const editCars = (e) => {
     e.preventDefault();
 
-    console.log("Edit Cars Data:", data);
-
     const formData = new FormData();
     formData.append("brand_id", data.brand_id);
     formData.append("model_id", data.model_id);
     formData.append("city_id", data.city_id);
     formData.append("color", data.color);
-
-    formData.forEach((value, key) => {
-      console.log(key, value);
-    });
 
     fetch(`https://autoapi.dezinfeksiyatashkent.uz/api/cars/${id}`, {
       method: 'PUT',

@@ -1,5 +1,5 @@
-import { Form, Input, Modal, Select, Upload, message } from "antd";
-import styles from "../brands/Brands.module.css"
+import { Form, Input, Modal, Upload, message } from "antd";
+import styles from "../brands/Brands.module.css";
 import { IoMdAddCircle } from "react-icons/io";
 import { MdDeleteForever } from 'react-icons/md';
 import { CiEdit } from 'react-icons/ci';
@@ -8,68 +8,132 @@ import { toast } from "react-toastify";
 import { PlusOutlined } from "@ant-design/icons";
 
 export const Brands = () => {
-  // const [previewOpen, setPreviewOpen] = useState(false);
-  // const [previewImage, setPreviewImage] = useState('');
-  // const [fileList, setFileList] = useState([
-  // ]);
-  // const handlePreview = async (file) => {
-  //   if (!file.url && !file.preview) {
-  //     file.preview = await getBase64(file.originFileObj);
-  //   }
-  //   setPreviewImage(file.url || file.preview);
-  //   setPreviewOpen(true);
-  // };
-  // const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
-  // const uploadButton = (
-  //   <button
-  //     style={{
-  //       border: 0,
-  //       background: 'none',
-  //     }}
-  //     type="button"
-  //   >
-  //     <PlusOutlined />
-  //     <div
-  //       style={{
-  //         marginTop: 8,
-  //       }}
-  //     >
-  //       Upload
-  //     </div>
-  //   </button>
-  // );
-
-  const[brands, setBrands] = useState([])
-  const imgURL = `https://autoapi.dezinfeksiyatashkent.uz/api/uploads/images`
+  const [brands, setBrands] = useState([]);
+  const imgURL = `https://autoapi.dezinfeksiyatashkent.uz/api/uploads/images`;
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [modalText, setModalText] = useState('Content of the modal');
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const [open3, setOpen3] = useState(false);
+  const [name, setName] = useState("");
+  const [image, setImage] = useState(null);
+  const [id, setId] = useState("");
+  const [data, setData] = useState({ title: "", images: ""})
+  const token = localStorage.getItem("accessToken");
+
 
   const getBrands = () => {
     fetch(`https://autoapi.dezinfeksiyatashkent.uz/api/brands`)
-    .then(res => res.json())
-    .then(data => {
-      setBrands(data?.data || []);
-    }).catch(err => {
-      console.log(err);
-      toast.error("Failed to fetch brands");
-    });
-  }
-
+      .then(res => res.json())
+      .then(data => {
+        setBrands(data?.data || []);
+      })
+      .catch(err => {
+        console.log(err);
+        toast.error("Failed to fetch brands");
+      });
+  };
   useEffect(() => {
     getBrands();
   }, []);
 
+  const createBrands = (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("title", name);
+    formData.append("images", image);
+
+    fetch("https://autoapi.dezinfeksiyatashkent.uz/api/brands", {
+      method: "POST",
+      body: formData,
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      }
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.success) {
+          toast.success(data?.message);
+          getBrands();
+          handleClose();
+        } else {
+          toast.error(data?.message);
+        }
+      })
+      .catch((err) => {
+        toast.error("An error occurred: " + err.message);
+      });
+  };
+
+  const deleteBrands = (e) => {
+    e.preventDefault();
+    fetch(`https://autoapi.dezinfeksiyatashkent.uz/api/brands/${id}`, {
+      method: 'DELETE',
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          const newBrands = brands.filter(item => item.id !== id);
+          setBrands(newBrands);
+          setOpen2(false);
+          toast.success("Brand deleted successfully");
+        } else {
+          toast.error("You can't delete this");
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        toast.error("An error occurred: " + err.message);
+      });
+  };
+  
+  const editBrands = (e) => {
+    e.preventDefault();
+  
+    const formData = new FormData();
+    formData.append("title", data.title); 
+    if (image) {
+      formData.append("images", image);
+    }
+  
+    fetch(`https://autoapi.dezinfeksiyatashkent.uz/api/brands/${id}`, {
+      method: 'PUT',
+      body: formData,
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
+    })
+      .then(response => response.json())
+      .then(response => {
+        if (response.success) {
+          toast.success("Brand updated successfully");
+          getBrands();
+          setOpen3(false);
+          setData({ title: "", images: null });
+          setName("");
+          setImage(null);
+        } else {
+          toast.error("Error updating brand: " + response.message);
+        }
+      })
+      .catch(error => {
+        console.error("Update error:", error);
+        toast.error("An error occurred: " + error.message);
+      });
+  };
+  
+
   const handleOk = () => {
-    setModalText('The modal will be closed after two seconds');
     setConfirmLoading(true);
     setTimeout(() => {
       setOpen(false);
       setConfirmLoading(false);
     }, 2000);
   };
+
   const handleCancel = () => {
-    console.log('Clicked cancel button');
     setOpen(false);
   };
 
@@ -84,63 +148,95 @@ export const Brands = () => {
 
     return isValidFile;
   };
+
   const normFile = (e) => {
     if (Array.isArray(e)) {
       return e;
     }
     return e && e.fileList;
-  }
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setName("");
+    setImage(null);
+  };
+
+  const handleOpen2 = (id) => {
+    setId(id);
+    setOpen2(true);
+  };
+
+  const handleClose2 = () => {
+    setOpen2(false);
+  };
+
+  const handleOpen3 = (item) => {
+    setId(item?.id);
+    setOpen3(true);
+    setData({
+      title: item.title,
+      images: item.image_src
+    });
+  };
+
+  const handleClose3 = () => {
+    setOpen3(false);
+  };
+
   return (
     <div className={styles.tableContainer}>
-    <nav className={styles.navbar}>
-      <h2>Brands</h2>
-      <button className={styles.addBtn} onClick={setOpen}>
-        <IoMdAddCircle />
-      </button>
-    </nav>
-    <table className={styles.table}>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Image</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {brands?.map((item, index) => (
-          <tr key={index}>
-            <td>{item?.title}</td>
-            <td>
-              {console.log(item)}
-              <img src={`${imgURL}/${item?.image_src}`} alt="Car Image" />
-            </td>
-            <td>
-              <div className={styles.btns}>
-                <button className={`${styles.btn} ${styles.btnRed}`}>
-                  <MdDeleteForever className="delete-icon" />
-                </button>
-                <button className={`${styles.btn} ${styles.btnBlue}`}>
-                  <CiEdit className="edit-icon" />
-                </button>
-              </div>
-            </td>
+      <nav className={styles.navbar}>
+        <h2>Brands</h2>
+        <button className={styles.addBtn} onClick={handleOpen}>
+          <IoMdAddCircle />
+        </button>
+      </nav>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Image</th>
+            <th>Action</th>
           </tr>
-        ))}
-          
-      </tbody>
-    </table>
-    <Modal
-      open={open}
-      onOk={handleOk}
-      footer={null}
-      confirmLoading={confirmLoading}
-      onCancel={handleCancel}
-    >
-      <form>
-        <div className={styles.row}>
-          <label>Brand Name</label>
-          <Input/>
-        </div>
+        </thead>
+        <tbody>
+          {brands?.map((item, index) => (
+            <tr key={index}>
+              <td>{item?.title}</td>
+              <td>
+                <img src={`${imgURL}/${item?.image_src}`} alt="Car Image" />
+              </td>
+              <td>
+                <div className={styles.btns}>
+                  <button className={`${styles.btn} ${styles.btnRed}`} onClick={() => handleOpen2(item.id)}>
+                    <MdDeleteForever className="delete-icon"/>
+                  </button>
+                  <button className={`${styles.btn} ${styles.btnBlue}`} onClick={() => handleOpen3(item)}>
+                    <CiEdit className="edit-icon" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <Modal
+        open={open}
+        onOk={handleOk}
+        footer={null}
+        confirmLoading={confirmLoading}
+        onCancel={handleClose}
+      >
+        <form onSubmit={createBrands}>
+          <div className={styles.row}>
+            <label>Brand Name</label>
+            <Input value={name} onChange={(e) => setName(e.target.value)} />
+          </div>
           <Form.Item
             label="Upload car images"
             rules={[{ required: true, message: 'Please upload images' }]}
@@ -153,6 +249,11 @@ export const Brands = () => {
               }}
               beforeUpload={beforeUpload}
               listType="picture-card"
+              onChange={(info) => {
+                if (info.file.status === 'done') {
+                  setImage(info.file.originFileObj);
+                }
+              }}
             >
               <div>
                 <PlusOutlined />
@@ -160,71 +261,59 @@ export const Brands = () => {
               </div>
             </Upload>
           </Form.Item>
-        <button type='submit' className={styles.btnAdd}>Add</button>
-      </form>
-    </Modal>
-    {/* <Modal
-      open={open2}
-      onOk={handleOpen2}
-      footer={null}
-      confirmLoading={confirmLoading}
-      onCancel={handleClose2}
-    >
-      <p className={styles.deleteText}>Are you sure to delete?</p>
-      <button className={styles.btnAdd} onClick={deleteCars}>Delete</button>
-
-    </Modal> */}
-    {/* <Modal
-      title={"Vertically centered modal dialog"}
-      open={open3}
-      onOk={handleOk}
-      footer={null}
-      confirmLoading={confirmLoading}
-      onCancel={handleClose3}
-    >
-      <form onSubmit={editCars}>
-        <div className={styles.row}>
-          <label>Brand</label>
-          <Select
-            value={data.brand_id}
-            onChange={(value) => setData({ ...data, brand_id: value })}
+          <button type='submit' className={styles.btnAdd}>Add</button>
+        </form>
+      </Modal>
+      <Modal
+        open={open2}
+        onOk={deleteBrands}
+        footer={null}
+        confirmLoading={confirmLoading}
+        onCancel={handleClose2}
+      >
+        <p className={styles.deleteText}>Are you sure you want to delete?</p>
+        <button className={styles.btnAdd} onClick={deleteBrands}>Delete</button>
+      </Modal>
+      <Modal
+        title={"Vertically centered modal dialog"}
+        open={open3}
+        onOk={handleOk}
+        footer={null}
+        confirmLoading={confirmLoading}
+        onCancel={handleClose3}
+      >
+        <form onSubmit={editBrands}>
+          <div className={styles.row}>
+            <label>Brand Name</label>
+            <Input value={data.title} onChange={(e) => setData({ ...data, title: e.target.value })} />
+          </div>
+          <Form.Item
+            label="Upload car images"
+            rules={[{ required: true, message: 'Please upload images' }]}
+            valuePropName="fileList"
+            getValueFromEvent={normFile}
           >
-            {brands.map((brand) => (
-              <Select.Option key={brand.id} value={brand.id}>{brand.title}</Select.Option>
-            ))}
-          </Select>
-        </div>
-        <div className={styles.row}>
-          <label>Model</label>
-          <Select
-            value={data.model_id}
-            onChange={(value) => setData({ ...data, model_id: value })}
-          >
-            {models.map((model) => (
-              <Select.Option key={model.id} value={model.id}>{model.name}</Select.Option>
-            ))}
-          </Select>
-        </div>
-        <div className={styles.row}>
-          <label>Color</label>
-          <Input value={data.color} onChange={(e) => setData({ ...data, color: e.target.value })} />
-        </div>
-        <div className={styles.row}>
-          <label>City</label>
-          <Select
-            value={data.city_id}
-            onChange={(value) => setData({ ...data, city_id: value })}
-          >
-            {cities.map((city) => (
-              <Select.Option key={city.id} value={city.id}>{city.name}</Select.Option>
-            ))}
-          </Select>
-        </div>
-        <button type='submit' className={styles.btnAdd}>Update</button>
-      </form>
-    </Modal> */}
-
-
-  </div>
-  )
-}
+            <Upload
+              customRequest={({ onSuccess }) => {
+                onSuccess('ok');
+              }}
+              beforeUpload={beforeUpload}
+              listType="picture-card"
+              onChange={(info) => {
+                if (info.file.status === 'done') {
+                  setImage(info.file.originFileObj);
+                }
+              }}
+            >
+              <div>
+                <PlusOutlined />
+                <div style={{ marginTop: 8 }}>Upload</div>
+              </div>
+            </Upload>
+          </Form.Item>
+          <button type='submit' className={styles.btnAdd}>Update</button>
+        </form>
+      </Modal>
+    </div>
+  );
+};

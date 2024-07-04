@@ -1,43 +1,67 @@
+/* Login.module.css */
 .container {
-    max-width: 1280px;
-    height: 100vh;
-    background-color: #344C11;
-    margin: 0 auto;
-    padding: 90px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f9f9f9;
 }
+
 .form {
-    width: 448px;
-    margin: auto;
-    background-color: #AEC09A;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-    border-radius: 6px;
-    padding: 32px;
-    display: flex;
-    flex-direction: column;
-    color: #344C11;
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
-.row {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 32px;
-}
+
 .title {
-    margin-bottom: 48px;
-    font-size: 24px;
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1rem;
 }
+
+.row {
+  display: flex;
+  flex-direction: column;
+}
+
 .label {
-    margin-bottom: 8px;
-    font-size: 14px;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
 }
-.input, .btn {
-    padding: 6px 11px;
-    border-radius: 6px;
-    border: 2px solid #344C11;
+
+.input {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
 }
+
+.input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
 .btn {
-    cursor: pointer;
-    padding: 4px 15px;
-    margin: 32px 0;
-    background-color: #344C11;
-    color: #FFF;
+  background-color: #007bff;
+  color: #fff;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.btn:hover {
+  background-color: #0056b3;
 }
